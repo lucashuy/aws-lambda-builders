@@ -127,7 +127,7 @@ class NodejsNpmEsbuildWorkflow(BaseWorkflow):
         )
 
         install_action = NodejsNpmWorkflow.get_install_action(
-            source_dir, scratch_dir, subprocess_npm, osutils, self.options, is_production=False
+            source_dir, scratch_dir, subprocess_npm, osutils, self.options
         )
 
         if self.download_dependencies and not self.dependencies_dir:
