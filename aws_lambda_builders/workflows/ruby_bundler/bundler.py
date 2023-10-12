@@ -54,9 +54,10 @@ class SubprocessBundler(object):
 
         p = self.osutils.popen(invoke_bundler, stdout=self.osutils.pipe, stderr=self.osutils.pipe, cwd=cwd)
 
-        out, _ = p.communicate()
+        out, err = p.communicate()
 
         if p.returncode != 0:
+            LOG.info(p.returncode)
             if p.returncode == GEMFILE_NOT_FOUND:
                 LOG.warning("Gemfile not found. Continuing the build without dependencies.")
 
@@ -66,6 +67,7 @@ class SubprocessBundler(object):
                     self.osutils.remove_directory(check_dir)
             else:
                 # Bundler has relevant information in stdout, not stderr.
-                raise BundlerExecutionError(message=out.decode("utf8").strip())
+                message_stream = out if out else err
+                raise BundlerExecutionError(message=message_stream.decode("utf8").strip())
 
         return out.decode("utf8").strip()
