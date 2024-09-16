@@ -54,7 +54,7 @@ jobs:
 
   unit-functional:
     name: ${{ matrix.os }} / ${{ matrix.python }} / unit-functional
-    if: github.repository_owner == 'aws'
+    
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -78,7 +78,7 @@ jobs:
 
   node-integration:
     name: ${{ matrix.os }} / ${{ matrix.python }} / node / npm ${{ matrix.npm }}.x
-    if: github.repository_owner == 'aws'
+    
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -109,7 +109,7 @@ jobs:
 
   node-esbuild-integration:
     name: ${{ matrix.os }} / ${{ matrix.python }} / esbuild / npm ${{ matrix.npm }}.x
-    if: github.repository_owner == 'aws'
+    
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -142,7 +142,7 @@ jobs:
 
   golang-integration:
     name: ${{ matrix.os }} / ${{ matrix.python }} / golang
-    if: github.repository_owner == 'aws'
+    
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -169,7 +169,7 @@ jobs:
 
   java-maven-integration:
     name: ${{ matrix.os }} / ${{ matrix.python }} / java maven
-    if: github.repository_owner == 'aws'
+    
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -197,7 +197,7 @@ jobs:
 
   java-gradle-integration:
     name: ${{ matrix.os }} / ${{ matrix.python }} / java gradle
-    if: github.repository_owner == 'aws'
+    
     runs-on: ${{ matrix.os }}
     env:
       GRADLE_OPTS: -Dorg.gradle.daemon=false
@@ -227,7 +227,7 @@ jobs:
 
   custom-make-integration:
     name: ${{ matrix.os }} / ${{ matrix.python }} / custom make
-    if: github.repository_owner == 'aws'
+    
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -251,7 +251,7 @@ jobs:
 
   python-integration:
     name: ${{ matrix.os }} / ${{ matrix.python }} / python
-    if: github.repository_owner == 'aws'
+    
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -279,7 +279,7 @@ jobs:
 
   ruby-integration:
     name: ${{ matrix.os }} / ${{ matrix.python }} / ruby
-    if: github.repository_owner == 'aws'
+    
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -306,7 +306,7 @@ jobs:
 
   dotnet-integration:
     name: ${{ matrix.os }} / ${{ matrix.python }} / dotnet
-    if: github.repository_owner == 'aws'
+    
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -330,7 +330,7 @@ jobs:
 
   rust-cargo-lambda-integration:
     name: ${{ matrix.os }} / ${{ matrix.python }} / rust-cargo-lambda
-    if: github.repository_owner == 'aws'
+    
     runs-on: ${{ matrix.os }}
     env:
       CARGO_LAMBDA_VERSION: 0.15.0
