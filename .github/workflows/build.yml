@@ -223,7 +223,7 @@ jobs:
           distribution: 'zulu'
           java-version: '21'
       - run: make init
-      - run: "rmdir %USERPROFILE%/.gradle/caches"
+      - run: "rmdir C:/Users/RUNNER~1/AppData/Local/Temp"
       - run: pytest -vv tests/integration/workflows/java_gradle
 
   custom-make-integration:
