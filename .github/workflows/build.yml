@@ -34,7 +34,9 @@ jobs:
 
   java-gradle-integration:
     name: ${{ matrix.os }} / ${{ matrix.python }} / java gradle
-    
+    env:
+      GRADLE_OPTS: -Dorg.gradle.daemon=false
+      JAVA_OPTS: -Dorg.gradle.daemon=false
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
