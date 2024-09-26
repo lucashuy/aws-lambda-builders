@@ -54,10 +54,7 @@ jobs:
           python-version: ${{ matrix.python }}
       - uses: actions/setup-java@v4
         with:
-          distribution: 'corretto'
+          distribution: 'zulu'
           java-version: '21'
       - run: make init
-      - run: gradle --status
-      - run: gradle --stop
-      - run: gradle --status
       - run: pytest -vv tests/integration/workflows/java_gradle
