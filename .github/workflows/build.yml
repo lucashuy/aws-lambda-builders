@@ -63,4 +63,7 @@ jobs:
         with:
           gradle-version: "8.10"
       - run: make init
+      - run: gradle --status
+      - run: gradle --stop
+      - run: gradle --status
       - run: pytest -vv tests/integration/workflows/java_gradle
