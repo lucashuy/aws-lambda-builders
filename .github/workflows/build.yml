@@ -34,9 +34,6 @@ jobs:
 
   java-gradle-integration:
     name: ${{ matrix.os }} / ${{ matrix.python }} / java gradle
-    env:
-      GRADLE_OPTS: -Dorg.gradle.daemon=false
-      JAVA_OPTS: -Dorg.gradle.daemon=false
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -59,9 +56,6 @@ jobs:
         with:
           distribution: 'corretto'
           java-version: '21'
-      - uses: gradle/actions/setup-gradle@v4
-        with:
-          gradle-version: "8.10"
       - run: make init
       - run: gradle --status
       - run: gradle --stop
