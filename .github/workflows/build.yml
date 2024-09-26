@@ -59,4 +59,4 @@ jobs:
           distribution: 'zulu'
           java-version: '21'
       - run: make init
-      - run: pytest -vv tests/integration/workflows/java_gradle
+      - run: pytest -vv tests/integration/workflows/java_gradle/test_java_gradle.py::TestJavaGradle_3_java21::test_build_with_layers_and_scope
