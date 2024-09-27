@@ -37,7 +37,7 @@ jobs:
     runs-on: windows-latest
     steps:
     - run: gradle --status
-    - run: java --version
+    - run: java -version
 
   java-gradle-integration:
     name: ${{ matrix.os }} / ${{ matrix.python }} / java gradle
