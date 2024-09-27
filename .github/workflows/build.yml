@@ -32,6 +32,12 @@ jobs:
       - name: report-success
         run: exit 0
 
+  test:
+    name: test
+    runs-on: windows-latest
+    steps:
+    - run: gradle --status
+
   java-gradle-integration:
     name: ${{ matrix.os }} / ${{ matrix.python }} / java gradle
     runs-on: ${{ matrix.os }}
@@ -57,6 +63,6 @@ jobs:
       - uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
-          java-version: '21'
+          java-version: '17'
       - run: make init
       - run: pytest -vv tests/integration/workflows/java_gradle/test_java_gradle.py::TestJavaGradle_3_java21::test_build_with_layers_and_scope
