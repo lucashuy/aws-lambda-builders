@@ -34,12 +34,12 @@ class SubprocessGradle(object):
             raise BuildFileNotFoundError(build_file)
 
         args = ["build", "--build-file", build_file, "--debug", "--no-build-cache"]
-        if cache_dir is not None:
-            args.extend(["--project-cache-dir", cache_dir])
-        if properties is not None:
-            args.extend(["-D%s=%s" % (n, v) for n, v in properties.items()])
-        # if init_script_path is not None:
-            # args.extend(["--init-script", init_script_path])
+        # if cache_dir is not None:
+            # args.extend(["--project-cache-dir", cache_dir])
+        # if properties is not None:
+            # args.extend(["-D%s=%s" % (n, v) for n, v in properties.items()])
+        if init_script_path is not None:
+            args.extend(["--init-script", init_script_path])
         ret_code, _, stderr = self._run(args, source_dir)
         if ret_code != 0:
             raise GradleExecutionError(message=stderr.decode("utf8").strip())
