@@ -36,8 +36,15 @@ jobs:
     name: test
     runs-on: windows-latest
     steps:
-    - run: gradle --status
-    - run: java -version
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '21'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "8.9"
+      - run: gradle -v
+      - run: java --version
 
   java-gradle-integration:
     name: ${{ matrix.os }} / ${{ matrix.python }} / java gradle
