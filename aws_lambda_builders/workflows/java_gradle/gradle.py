@@ -34,8 +34,8 @@ class SubprocessGradle(object):
             raise BuildFileNotFoundError(build_file)
 
         args = ["build", "--build-file", build_file, "--debug", "--no-build-cache"]
-        # if cache_dir is not None:
-            # args.extend(["--project-cache-dir", cache_dir])
+        if cache_dir is not None:
+            args.extend(["--project-cache-dir", cache_dir])
         if properties is not None:
             args.extend(["-D%s=%s" % (n, v) for n, v in properties.items()])
         if init_script_path is not None:
