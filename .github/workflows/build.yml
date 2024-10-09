@@ -48,6 +48,7 @@ jobs:
       - run: $env:TMPDIR
       - run: $env:TEMP
       - run: $env:TMP
+      - run: $env:userprofile
 
   java-gradle-integration:
     name: ${{ matrix.os }} / ${{ matrix.python }} / java gradle
