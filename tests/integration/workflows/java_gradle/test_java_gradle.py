@@ -36,7 +36,13 @@ class TestJavaGradle(TestCase):
 
     def setUp(self):
         self.artifacts_dir = tempfile.mkdtemp()
-        self.scratch_dir = tempfile.mkdtemp()
+        
+        import platform
+        if platform.system().lower() == "windows" and os.getenv("GITHUB_ACTIONS"):
+            self.scratch_dir = tempfile.mkdtemp(dir=os.getenv("userprofile"))
+        else:
+            self.scratch_dir = tempfile.mkdtemp()
+            
         self.dependencies_dir = tempfile.mkdtemp()
         self.builder = LambdaBuilder(language="java", dependency_manager="gradle", application_framework=None)
 

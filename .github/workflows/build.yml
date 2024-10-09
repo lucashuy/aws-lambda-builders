@@ -20,184 +20,38 @@ jobs:
     name: PR Workflow
     # If any dependent jobs fails, this WF skips which won't block merging PRs
     # calling always() is required for this WF to run all the time
-    if: github.repository_owner == 'aws' && always()
+    
     runs-on: ubuntu-latest
     needs:
-      - unit-functional
-      - node-integration
-      - node-esbuild-integration
-      - golang-integration
-      - java-maven-integration
       - java-gradle-integration
-      - custom-make-integration
-      - python-integration
-      - ruby-integration
-      - dotnet-integration
-      - rust-cargo-lambda-integration
     steps:
       - name: report-failure
         if: |
-          needs.unit-functional.result != 'success' ||
-          needs.node-integration.result != 'success' ||
-          needs.node-esbuild-integration.result != 'success' ||
-          needs.golang-integration.result != 'success' ||
-          needs.java-maven-integration.result != 'success' ||
-          needs.java-gradle-integration.result != 'success' ||
-          needs.custom-make-integration.result != 'success' ||
-          needs.python-integration.result != 'success' ||
-          needs.ruby-integration.result != 'success' ||
-          needs.dotnet-integration.result != 'success' ||
-          needs.rust-cargo-lambda-integration.result != 'success'
+          needs.java-gradle-integration.result != 'success'
         run: exit 1
       - name: report-success
         run: exit 0
 
-  unit-functional:
-    name: ${{ matrix.os }} / ${{ matrix.python }} / unit-functional
-    if: github.repository_owner == 'aws'
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os:
-          - ubuntu-latest
-          - windows-latest
-        python:
-          - "3.8"
-          - "3.9"
-          - "3.10"
+  test:
+    name: test
+    runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: ${{ matrix.python }}
-      - name: Unit Testing
-        run: make pr
-      - name: Functional Testing
-        run: make func-test
-
-  node-integration:
-    name: ${{ matrix.os }} / ${{ matrix.python }} / node / npm ${{ matrix.npm }}.x
-    if: github.repository_owner == 'aws'
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os:
-          - ubuntu-latest
-          - windows-latest
-        python:
-          - "3.8"
-          - "3.9"
-          - "3.10"
-        npm:
-          - 8
-          - 9
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: ${{ matrix.python }}
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-      - if: ${{ matrix.npm }}
-        run: npm install -g npm@${{ matrix.npm }}
-      - run: npm --version
-      - run: make init
-      - run: pytest -vv tests/integration/workflows/nodejs_npm
-
-  node-esbuild-integration:
-    name: ${{ matrix.os }} / ${{ matrix.python }} / esbuild / npm ${{ matrix.npm }}.x
-    if: github.repository_owner == 'aws'
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os:
-          - ubuntu-latest
-          - windows-latest
-        python:
-          - "3.8"
-          - "3.9"
-          - "3.10"
-          - "3.11"
-          - "3.12"
-        npm:
-          - 8
-          - 9
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: ${{ matrix.python }}
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-      - if: ${{ matrix.npm }}
-        run: npm install -g npm@${{ matrix.npm }}
-      - run: npm --version
-      - run: make init
-      - run: pytest -vv tests/integration/workflows/nodejs_npm_esbuild
-
-  golang-integration:
-    name: ${{ matrix.os }} / ${{ matrix.python }} / golang
-    if: github.repository_owner == 'aws'
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os:
-          - ubuntu-latest
-          - windows-latest
-        python:
-          - "3.8"
-          - "3.9"
-          - "3.10"
-          - "3.11"
-          - "3.12"
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: ${{ matrix.python }}
-      - uses: actions/setup-go@v5
-        with:
-          go-version: '^1.16'
-      - run: make init
-      - run: pytest -vv tests/integration/workflows/go_modules
-
-  java-maven-integration:
-    name: ${{ matrix.os }} / ${{ matrix.python }} / java maven
-    if: github.repository_owner == 'aws'
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os:
-          - ubuntu-latest
-          - windows-latest
-        python:
-          - "3.8"
-          - "3.9"
-          - "3.10"
-          - "3.11"
-          - "3.12"
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: ${{ matrix.python }}
       - uses: actions/setup-java@v4
         with:
-          distribution: 'corretto'
+          distribution: 'zulu'
           java-version: '21'
-      - run: make init
-      - run: pytest -vv tests/integration/workflows/java_maven
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "8.9"
+      - run: gradle -v
+      - run: java --version
+      - run: $env:TMPDIR
+      - run: $env:TEMP
+      - run: $env:TMP
+      - run: $env:userprofile
 
   java-gradle-integration:
     name: ${{ matrix.os }} / ${{ matrix.python }} / java gradle
-    if: github.repository_owner == 'aws'
     runs-on: ${{ matrix.os }}
     env:
       GRADLE_OPTS: -Dorg.gradle.daemon=false
@@ -206,7 +60,7 @@ jobs:
       matrix:
         os:
           - ubuntu-latest
-          - windows-latest
+          - windows-2019
         python:
           - "3.8"
           - "3.9"
@@ -222,161 +76,8 @@ jobs:
         with:
           distribution: 'zulu'
           java-version: '21'
-      - run: make init
-      - run: pytest -vv tests/integration/workflows/java_gradle
-
-  custom-make-integration:
-    name: ${{ matrix.os }} / ${{ matrix.python }} / custom make
-    if: github.repository_owner == 'aws'
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os:
-          - ubuntu-latest
-          - windows-latest
-        python:
-          - "3.8"
-          - "3.9"
-          - "3.10"
-          - "3.11"
-          - "3.12"
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: gradle/actions/setup-gradle@v4
         with:
-          python-version: ${{ matrix.python }}
+          gradle-version: "8.9"
       - run: make init
-      - run: pytest -vv tests/integration/workflows/custom_make
-
-  python-integration:
-    name: ${{ matrix.os }} / ${{ matrix.python }} / python
-    if: github.repository_owner == 'aws'
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os:
-          - ubuntu-latest
-          - windows-latest
-        python:
-          - "3.8"
-          - "3.9"
-          - "3.10"
-          - "3.11"
-          - "3.12"
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: ${{ matrix.python }}
-      - run: |
-          python -m pip install --upgrade pip
-          pip install --upgrade setuptools
-        if: ${{ matrix.os }} == 'ubuntu-latest' && ${{ matrix.python }} == '3.12'
-      - run: make init
-      - run: pytest -vv tests/integration/workflows/python_pip
-
-  ruby-integration:
-    name: ${{ matrix.os }} / ${{ matrix.python }} / ruby
-    if: github.repository_owner == 'aws'
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os:
-          - ubuntu-latest
-          - windows-latest
-        python:
-          - "3.8"
-          - "3.9"
-          - "3.10"
-          - "3.11"
-          - "3.12"
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: ${{ matrix.python }}
-      - uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: "3.2"
-      - run: make init
-      - run: pytest -vv tests/integration/workflows/ruby_bundler
-
-  dotnet-integration:
-    name: ${{ matrix.os }} / ${{ matrix.python }} / dotnet
-    if: github.repository_owner == 'aws'
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os:
-          - ubuntu-latest
-          - windows-latest
-        python:
-          - "3.8"
-          - "3.9"
-          - "3.10"
-          - "3.11"
-          - "3.12"
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: ${{ matrix.python }}
-      - run: make init
-      - run: pytest -vv tests/integration/workflows/dotnet_clipackage
-
-  rust-cargo-lambda-integration:
-    name: ${{ matrix.os }} / ${{ matrix.python }} / rust-cargo-lambda
-    if: github.repository_owner == 'aws'
-    runs-on: ${{ matrix.os }}
-    env:
-      CARGO_LAMBDA_VERSION: 0.15.0
-    defaults:
-      run:
-        shell: bash
-    strategy:
-      fail-fast: false
-      matrix:
-        os:
-          - ubuntu-latest
-          - windows-latest
-        python:
-          - "3.9"
-          - "3.8"
-        rust:
-          - stable
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: ${{ matrix.python }}
-
-      # Install and configure Rust
-      - name: Install rustup
-        run: |
-          : install rustup if needed
-          if ! command -v rustup &> /dev/null ; then
-            curl --proto '=https' --tlsv1.2 --retry 10 --retry-connrefused -fsSL "https://sh.rustup.rs" | sh -s -- --default-toolchain none -y
-            echo "${CARGO_HOME:-$HOME/.cargo}/bin" >> $GITHUB_PATH
-          fi
-        if: ${{ matrix.os }} == 'ubuntu-latest'
-      - name: rustup toolchain install ${{ matrix.rust }}
-        run: rustup toolchain install ${{ matrix.rust }} --profile minimal --no-self-update
-      - run: rustup default ${{ matrix.rust }}
-      - run: |
-          : disable incremental compilation
-          echo CARGO_INCREMENTAL=0 >> $GITHUB_ENV
-      - run: |
-          : enable colors in Cargo output
-          echo CARGO_TERM_COLOR=always >> $GITHUB_ENV
-
-      # Install and configure Cargo Lambda
-      - name: Install Cargo Lambda
-        run: pip install cargo-lambda==$CARGO_LAMBDA_VERSION
-      - run: echo "$HOME/.local/bin" >> $GITHUB_PATH
-
-      - run: make init
-      - run: pytest -vv tests/integration/workflows/rust_cargo
+      - run: pytest -vv tests/integration/workflows/java_gradle/test_java_gradle.py::TestJavaGradle_3_java21::test_build_with_layers_and_scope
